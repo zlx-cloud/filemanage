@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.UserDao">
+	<resultMap id="UserMap" type="net.sinodata.business.entity.User">
+		<result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+		<result column="UNIQUE_CODE" property="uniqueCode" jdbcType="VARCHAR" />
+		<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+		<result column="USER_PASSWD" property="userPwd" jdbcType="VARCHAR" />
+		<result column="USER_DESC" property="userDesc" jdbcType="VARCHAR" />
+		<result column="ENABLED" property="enabled" jdbcType="VARCHAR" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="usertable_column">
+		USER_ID,UNIQUE_CODE,USER_NAME,USER_PASSWD,USER_DESC,ENABLED,CREATE_TIME
+	</sql>
+	
+	<select id="findByLoginName" resultMap="UserMap" parameterType="java.lang.String">
+		select <include refid="usertable_column" /> from S_USER t 
+		where t.USER_NAME = #{username,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findUserByCode" resultMap="UserMap" parameterType="java.lang.String">
+		select <include refid="usertable_column" /> from S_USER t
+		where t.UNIQUE_CODE = #{uniqueCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="userList" resultMap="UserMap" parameterType="map">
+		select * from (
+			select k.*, rownum rnum from (
+				select <include refid="usertable_column" /> from S_USER t where 1 = 1
+				<if test="uniqueCode!=null and uniqueCode!=''"> 
+					and t.UNIQUE_CODE like '%'||#{uniqueCode,jdbcType=VARCHAR}||'%'
+				</if>
+				<if test="userName!=null and userName!=''"> 
+					and t.USER_NAME like '%'||#{userName,jdbcType=VARCHAR}||'%'
+				</if>
+				order by t.CREATE_TIME desc,t.USER_NAME,t.USER_ID
+			) k where rownum &lt;= #{end}
+		) where rnum &gt; #{start}
+	</select>
+	
+	<select id="userCount" parameterType="map" resultType="int">
+		select count(1) from S_USER t where 1 = 1
+		<if test="uniqueCode!=null and uniqueCode!=''"> 
+			and t.UNIQUE_CODE like '%'||#{uniqueCode,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="userName!=null and userName!=''"> 
+			and t.USER_NAME like '%'||#{userName,jdbcType=VARCHAR}||'%'
+		</if>
+	</select>
+	
+	<insert id="addUser" parameterType="net.sinodata.business.entity.User">
+		insert into S_USER(<include refid="usertable_column" />) 
+		values
+		(#{userId,jdbcType=VARCHAR},#{uniqueCode,jdbcType=VARCHAR},
+		 #{userName,jdbcType=VARCHAR},#{userPwd,jdbcType=VARCHAR},
+		 #{userDesc,jdbcType=VARCHAR},#{enabled,jdbcType=VARCHAR},
+		 #{createTime,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="deleteUserById" parameterType="string">
+		delete from S_USER t where t.USER_ID = #{userId,jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="getUserById" resultMap="UserMap" parameterType="string">
+		select <include refid="usertable_column" /> from S_USER t
+		where t.USER_ID = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="updateUserById" parameterType="net.sinodata.business.entity.User">
+		update S_USER t set
+		t.USER_NAME = #{userName,jdbcType=VARCHAR},
+		t.USER_DESC = #{userDesc,jdbcType=VARCHAR},
+		t.ENABLED = #{enabled,jdbcType=VARCHAR}
+		where t.USER_ID = #{userId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateUserPwd" parameterType="net.sinodata.business.entity.User">
+		update S_USER t set t.USER_PASSWD = #{userPwd,jdbcType=VARCHAR}
+		where t.USER_ID = #{userId,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

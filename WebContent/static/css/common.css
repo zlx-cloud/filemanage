@@ -1,0 +1,27 @@
+.form-label {
+	margin-left: 5%;
+	width: 20%;
+}
+
+.label-width{
+	width: 120px;
+}
+
+.form-option {
+	width: 70%;
+}
+.form-option1{
+	width: 100%;
+}
+
+.layui-btn-cz {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 5px;
+    font-size: 12px;
+    width: 40px;
+}
+
+.editPwd-btn{
+	width: 60px;
+}

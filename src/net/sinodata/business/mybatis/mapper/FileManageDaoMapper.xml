@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FileManageDao">
+
+	<insert id="addFileInfo">
+		insert all
+		<foreach collection="fileInfo" item="fileInfo" 
+			index="index" open=" " close=" " separator=" ">
+			into S_FILE_INFO(ID,UNIQUE_CODE,UPLOADTIME,FILE_NAME,TARGET_FILE_NAME,FILE_SIZE,FILE_PATH,UPLOADDATE,FILE_MD5)
+			values
+			(#{fileInfo.id,jdbcType=VARCHAR},#{fileInfo.uniqueCode,jdbcType=VARCHAR},
+			 #{fileInfo.uploadTime,jdbcType=VARCHAR},#{fileInfo.fileName,jdbcType=VARCHAR},
+			 #{fileInfo.targetFileName,jdbcType=VARCHAR},#{fileInfo.fileSize,jdbcType=VARCHAR},
+			 #{fileInfo.filePath,jdbcType=VARCHAR},#{fileInfo.uploadDate,jdbcType=VARCHAR},
+			 #{fileInfo.fileMd5,jdbcType=VARCHAR})
+		</foreach> 
+		select 1 from dual
+	</insert>
+	
+	<insert id="addMonitorFileInfo" parameterType="map">
+		insert into T_FILE_INFO
+			(ID,UNIQUE_CODE,UPLOADTIME,FILE_NAME,TARGET_FILE_NAME,
+				FILE_SIZE,FILE_PATH,FASTDFS_FILE_PATH,JM_FASTDFS_FILE_PATH,FILE_MD5)
+		values
+			(#{id,jdbcType=VARCHAR},#{uniqueCode,jdbcType=VARCHAR},#{uploadTime,jdbcType=VARCHAR},
+			 #{fileName,jdbcType=VARCHAR},#{targetFileName,jdbcType=VARCHAR},#{fileSize,jdbcType=VARCHAR},
+			 #{filePath,jdbcType=VARCHAR},#{fastDfsPath,jdbcType=VARCHAR},#{jmFastDfsPath,jdbcType=VARCHAR},
+			 #{fileMd5,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="deleteFileInfo" parameterType="string">
+		delete from T_FILE_INFO t where t.JM_FASTDFS_FILE_PATH = #{jmFastDfsPath,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="addFileDownloadLog" parameterType="map">
+		insert into T_FILE_DOWNLOAD_LOG
+			(UNIQUE_CODE,DOWNLOADTIME,FILE_NAME,FILE_SIZE,FASTDFS_FILE_PATH,UPLOADTIME,DOWNLOADDATE,DOWNLOADUSER,FILE_MD5)
+		values
+			(#{uniqueCode,jdbcType=VARCHAR},#{downloadTime,jdbcType=VARCHAR},
+			 #{fileName,jdbcType=VARCHAR},#{fileSize,jdbcType=VARCHAR},
+			 #{fastDfsPath,jdbcType=VARCHAR},#{uploadTime,jdbcType=VARCHAR},
+			 #{downloadDate,jdbcType=VARCHAR},#{downloadUser,jdbcType=VARCHAR},
+			 #{fileMd5,jdbcType=VARCHAR})
+	</insert>
+	
+	<resultMap id="LogMap" type="net.sinodata.business.entity.FileDownloadLog">
+		<result column="UNIQUE_CODE" property="uniqueCode" jdbcType="VARCHAR" />
+		<result column="DOWNLOADDATE" property="downloadDate" jdbcType="VARCHAR" />
+		<result column="DOWNLOADTIME" property="downloadTime" jdbcType="VARCHAR" />
+		<result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+		<result column="FILE_SIZE" property="fileSize" jdbcType="VARCHAR" />
+		<result column="FASTDFS_FILE_PATH" property="fastdfsFilePath" jdbcType="VARCHAR" />
+		<result column="UPLOADTIME" property="uploadTime" jdbcType="VARCHAR" />
+		<result column="DOWNLOADUSER" property="downloadUser" jdbcType="VARCHAR" />
+		<result column="FILE_MD5" property="fileMd5" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getLogList" resultMap="LogMap" parameterType="string">
+		select UNIQUE_CODE,DOWNLOADDATE,DOWNLOADTIME,FILE_NAME,
+			FILE_SIZE,FASTDFS_FILE_PATH,UPLOADTIME,DOWNLOADUSER,FILE_MD5
+		from T_FILE_DOWNLOAD_LOG t
+		where t.FASTDFS_FILE_PATH = #{fastdfsFilePath,jdbcType=VARCHAR}
+		order by t.DOWNLOADTIME desc
+	</select>
+	
+	<insert id="insertLog" parameterType="net.sinodata.business.entity.FileDownloadLog">
+		insert into T_FILE_DOWNLOAD_LOG
+			(UNIQUE_CODE,DOWNLOADTIME,FILE_NAME,FILE_SIZE,FASTDFS_FILE_PATH,UPLOADTIME,DOWNLOADDATE,DOWNLOADUSER,FILE_MD5)
+		values
+			(#{uniqueCode,jdbcType=VARCHAR},#{downloadTime,jdbcType=VARCHAR},
+			 #{fileName,jdbcType=VARCHAR},#{fileSize,jdbcType=VARCHAR},
+			 #{fastdfsFilePath,jdbcType=VARCHAR},#{uploadTime,jdbcType=VARCHAR},
+			 #{downloadDate,jdbcType=VARCHAR},#{downloadUser,jdbcType=VARCHAR},
+			 #{fileMd5,jdbcType=VARCHAR})
+	</insert>
+
+</mapper>

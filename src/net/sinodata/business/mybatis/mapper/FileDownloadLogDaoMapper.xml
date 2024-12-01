@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FileDownloadLogDao">
+	<resultMap id="FileDownloadLogMap" type="net.sinodata.business.entity.FileDownloadLog">
+		<result column="UPLOAD_CODE" property="uniqueCode" jdbcType="VARCHAR" />
+		<result column="UPLOAD_NAME" property="uploadUserName" jdbcType="VARCHAR" />
+		<result column="UPLOADTIME" property="uploadTime" jdbcType="VARCHAR" />
+		<result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+		<result column="FILE_SIZE" property="fileSize" jdbcType="VARCHAR" />
+		<result column="DOWNLOAD_CODE" property="downloadUser" jdbcType="VARCHAR" />
+		<result column="DOWNLOAD_NAME" property="downloadUserName" jdbcType="VARCHAR" />
+		<result column="DOWNLOADTIME" property="downloadTime" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="fileDownloadLogList" resultMap="FileDownloadLogMap" parameterType="map">
+		select * from (
+			select k.*, rownum rnum from (
+				select t.unique_code as upload_code,a.user_name as upload_name,
+       				to_char(
+            			to_date(
+							t.uploadtime,'yyyy-mm-dd hh24:mi:ss'
+						),
+					'yyyy-mm-dd hh24:mi:ss') as uploadtime,
+       				t.file_name,
+       				case
+						when t.file_size &lt; 1024 then t.file_size || 'B'
+						when t.file_size &gt;= 1024 and t.file_size &lt; 1048576 then round(t.file_size/1024,2) || 'KB'
+						when t.file_size &gt;= 1048576 then round(t.file_size/1048576) || 'M'
+					end as FILE_SIZE,
+       				t.downloaduser as download_code,b.user_name as download_name,
+        			to_char(
+            			to_date(
+							t.downloadtime,'yyyy-mm-dd hh24:mi:ss'
+						),
+					'yyyy-mm-dd hh24:mi:ss') as downloadtime
+				from t_file_download_log t
+				left join s_user a on t.unique_code=a.unique_code
+				left join s_user b on t.downloaduser=b.unique_code
+				where 1 = 1
+				<if test="fileName!=null and fileName!=''"> 
+					and t.FILE_NAME like '%'||#{fileName,jdbcType=VARCHAR}||'%'
+				</if>
+				<if test="uploadUserName!=null and uploadUserName!=''"> 
+					and a.user_name like '%'||#{uploadUserName,jdbcType=VARCHAR}||'%'
+				</if>
+				<if test="uploadDate!=null and uploadDate!=''"> 
+					and substr(t.uploadtime,1,8) = #{uploadDate,jdbcType=VARCHAR}
+				</if>
+				<if test="downloadUserName!=null and downloadUserName!=''"> 
+					and b.user_name like '%'||#{downloadUserName,jdbcType=VARCHAR}||'%'
+				</if>
+				<if test="downloadDate!=null and downloadDate!=''"> 
+					and substr(t.downloadtime,1,8) = #{downloadDate,jdbcType=VARCHAR}
+				</if>
+				order by t.DOWNLOADTIME desc,t.FILE_NAME
+			) k where rownum &lt;= #{end}
+		) where rnum &gt; #{start}
+	</select>
+	
+	<select id="fileDownloadLogCount" parameterType="map" resultType="int">
+		select count(1) from t_file_download_log t
+		left join s_user a on t.unique_code=a.unique_code
+		left join s_user b on t.downloaduser=b.unique_code
+		where 1 = 1
+		<if test="fileName!=null and fileName!=''"> 
+			and t.FILE_NAME like '%'||#{fileName,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="uploadUserName!=null and uploadUserName!=''"> 
+			and a.user_name like '%'||#{uploadUserName,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="uploadDate!=null and uploadDate!=''"> 
+			and substr(t.uploadtime,1,8) = #{uploadDate,jdbcType=VARCHAR}
+		</if>
+		<if test="downloadUserName!=null and downloadUserName!=''"> 
+			and b.user_name like '%'||#{downloadUserName,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="downloadDate!=null and downloadDate!=''"> 
+			and substr(t.downloadtime,1,8) = #{downloadDate,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+</mapper>
