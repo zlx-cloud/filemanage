@@ -19,8 +19,11 @@
 					<shiro:principal property="loginName"></shiro:principal>
 				</a></li>
 				<li class="layui-nav-item">
-					<a class="layui-icon layui-icon-logout" style="font-size: 25px; color: #ffffff;" 
-						href="${ctx}/logout" title="退出"></a></li>
+					<a class="layui-icon layui-icon-logout" 
+						style="font-size: 25px; color: #ffffff;" href="${ctx}/logout"
+						title="退出">
+					</a>
+				</li>
 			</ul>
 		</div>
 
@@ -31,9 +34,10 @@
 						<a href="javascript:;">
 							<i class="layui-icon layui-icon-upload-drag"></i> &nbsp;文件上传
 						</a>
-						<dl class="layui-nav-child">
-							<dd>
-								<a href="${ctx}/uploadFileInfo/uploadFileInfoListPage" target="iframeMain">上传文件信息</a>
+						<dl class="layui-nav-child layui-show">
+							<dd class="layui-this">
+								<a href="${ctx}/uploadFileInfo/uploadFileInfoListPage" target="iframeMain">上传文件信息
+								</a>
 							</dd>
 						</dl>
 					</li>
@@ -50,13 +54,21 @@
 							</dd>
 						</dl>
 					</li>
+					<li class="layui-nav-item">
+						<a href="${ctx}/remoteGetFileInfo/listPage" target="iframeMain">
+							<i class="layui-icon layui-icon-file"></i>&nbsp;远程获取文件信息
+						</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href="${ctx}/remoteUploadFileInfo/listPage" target="iframeMain">
+							<i class="layui-icon layui-icon-file"></i>&nbsp;远程上传文件信息
+						</a>
+					</li>
 					<shiro:hasRole name="admin">
 						<li class="layui-nav-item">
 							<a href="${ctx}/user/userListPage" target="iframeMain">
-								<i class="layui-icon layui-icon-user"></i>
-								&nbsp;用户管理
-							</a>
-						</li>
+							<i class="layui-icon layui-icon-user"></i>&nbsp;用户管理
+						</a></li>
 					</shiro:hasRole>
 				</ul>
 			</div>
@@ -65,6 +77,7 @@
 			<!-- 内容主体区域 -->
 			<div class="layadmin-tabsbody-item layui-show">
 				<iframe frameborder="0" class="layadmin-iframe" name="iframeMain"
+					src="${ctx}/uploadFileInfo/uploadFileInfoListPage"
 					style="width: 100%; height: 562px;" seamless></iframe>
 			</div>
 		</div>
