@@ -1,5 +1,6 @@
-package net.sinodata.business.rest;
+package net.sinodata.business.rest.remoteget;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,29 +14,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.sf.json.JSONObject;
-import net.sinodata.business.entity.RemoteGetFileInfo;
-import net.sinodata.business.service.RemoteGetFileInfoService;
+import net.sinodata.business.dao.UserDao;
+import net.sinodata.business.entity.RemoteGetFileConfig;
+import net.sinodata.business.entity.User;
+import net.sinodata.business.service.RemoteGetFileConfigService;
 import net.sinodata.business.util.DateUtil;
 import net.sinodata.business.util.StringUtil;
 
 @Controller
-@RequestMapping(value = "/remoteGetFileInfo")
-public class RemoteGetFileInfoController {
+@RequestMapping(value = "/remoteGetFileConfig")
+public class RemoteGetFileConfigController {
 
 	@Autowired
-	RemoteGetFileInfoService remoteGetFileInfoService;
+	RemoteGetFileConfigService remoteGetFileConfigService;
+	@Autowired
+	private UserDao userDao;
 
 	// 列表页面
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
 	public String listPage() {
-		return "business/remoteGetFileInfo/list";
+		return "business/remoteGetFileConfig/list";
 	}
 
 	// 信息列表
 	@RequestMapping(value = "/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public JSONObject list(@RequestParam Map<String, Object> params) {
-		JSONObject result = remoteGetFileInfoService.list(params);
+		JSONObject result = remoteGetFileConfigService.list(params);
 		return result;
 	}
 
@@ -44,27 +49,27 @@ public class RemoteGetFileInfoController {
 	public String editPage(HttpServletRequest request) {
 		String id = request.getParameter("id");
 		if (!StringUtil.isEmpty(id)) {
-			RemoteGetFileInfo remoteGetFileInfo = remoteGetFileInfoService.getById(id);
-			request.setAttribute("file", remoteGetFileInfo);
+			RemoteGetFileConfig remoteGetFileConfig = remoteGetFileConfigService.getById(id);
+			request.setAttribute("file", remoteGetFileConfig);
 		}
 		String type = request.getParameter("type");
 		request.setAttribute("type", type);
-		return "business/remoteGetFileInfo/edit";
+		return "business/remoteGetFileConfig/edit";
 	}
 
 	// 信息维护
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String edit(RemoteGetFileInfo remoteGetFileInfo) {
+	public String edit(RemoteGetFileConfig remoteGetFileConfig) {
 		int result = 0;
-		String type = remoteGetFileInfo.getType();
+		String type = remoteGetFileConfig.getType();
 		if ("add".equals(type)) {
-			remoteGetFileInfo.setId(StringUtil.createUUID());
-			remoteGetFileInfo.setCreateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
-			result = remoteGetFileInfoService.add(remoteGetFileInfo);
+			remoteGetFileConfig.setId(StringUtil.createUUID());
+			remoteGetFileConfig.setCreateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
+			result = remoteGetFileConfigService.add(remoteGetFileConfig);
 		} else if ("edit".equals(type)) {
-			remoteGetFileInfo.setUpdateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
-			result = remoteGetFileInfoService.updateById(remoteGetFileInfo);
+			remoteGetFileConfig.setUpdateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
+			result = remoteGetFileConfigService.updateById(remoteGetFileConfig);
 		}
 		return result + "";
 	}
@@ -73,7 +78,13 @@ public class RemoteGetFileInfoController {
 	@RequestMapping(value = "/deleteById", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void deleteById(@RequestParam(value = "id") String id) {
-		remoteGetFileInfoService.deleteById(id);
+		remoteGetFileConfigService.deleteById(id);
+	}
+
+	@RequestMapping(value = "/findAllUser")
+	@ResponseBody
+	public List<User> findAllUser() {
+		return userDao.findAllUser();
 	}
 
 }

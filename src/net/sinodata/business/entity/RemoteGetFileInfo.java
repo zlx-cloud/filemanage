@@ -2,51 +2,58 @@ package net.sinodata.business.entity;
 
 public class RemoteGetFileInfo {
 
-	private String id; // ID
-	private String method; // 方式：FTP、SFTP、HADOOP
-	private String ip; // IP
-	private String port; // 端口
-	private String userName; // 用户名
-	private String password; // 密码
-	private String route; // 路径
-	private String createTime; // 创建时间
-	private String updateTime; // 更新时间
-	
-	private String type;
+	private String userName;
+	private String getTime; // 文件获取时间
+	private String getDate; // 文件获取日期
+	private String fileName; // 文件名称
+	private String targetFileName; // 目标文件名称
+	private String fileSize; // 文件大小
+	private String filePath; // 文件上传路径
+	private String configId; // 配置ID
+	private String route;
+	private String serviceName;
 
 	public RemoteGetFileInfo() {
 	}
 
-	public String getId() {
-		return id;
+	public String getFileName() {
+		return fileName;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
-	public String getMethod() {
-		return method;
+	public String getTargetFileName() {
+		return targetFileName;
 	}
 
-	public void setMethod(String method) {
-		this.method = method;
+	public void setTargetFileName(String targetFileName) {
+		this.targetFileName = targetFileName;
 	}
 
-	public String getIp() {
-		return ip;
+	public String getFileSize() {
+		return fileSize;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
 	}
 
-	public String getPort() {
-		return port;
+	public String getFilePath() {
+		return filePath;
 	}
 
-	public void setPort(String port) {
-		this.port = port;
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getConfigId() {
+		return configId;
+	}
+
+	public void setConfigId(String configId) {
+		this.configId = configId;
 	}
 
 	public String getUserName() {
@@ -57,14 +64,6 @@ public class RemoteGetFileInfo {
 		this.userName = userName;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getRoute() {
 		return route;
 	}
@@ -73,28 +72,28 @@ public class RemoteGetFileInfo {
 		this.route = route;
 	}
 
-	public String getCreateTime() {
-		return createTime;
+	public String getServiceName() {
+		return serviceName;
 	}
 
-	public void setCreateTime(String createTime) {
-		this.createTime = createTime;
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
 	}
 
-	public String getUpdateTime() {
-		return updateTime;
+	public String getGetTime() {
+		return getTime;
 	}
 
-	public void setUpdateTime(String updateTime) {
-		this.updateTime = updateTime;
+	public void setGetTime(String getTime) {
+		this.getTime = getTime;
 	}
 
-	public String getType() {
-		return type;
+	public String getGetDate() {
+		return getDate;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setGetDate(String getDate) {
+		this.getDate = getDate;
 	}
 
 }

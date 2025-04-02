@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>远程获取文件信息列表</title>
+<title>远程获取文件配置列表</title>
 <link rel="stylesheet" type="text/css" href="${ctx}/static/layui/css/layui.css" />
 <link rel="stylesheet" type="text/css" href="${ctx}/static/layui/css/view.css" />
 <link rel="stylesheet" type="text/css" href="${ctx}/static/css/common.css" />
@@ -19,13 +19,18 @@
 				<div class="form-box">
 					<div class="layui-form layui-form-item">
 						<div class="layui-inline" style="width: 100%;">
+							<div class="layui-form-mid">地址名称：</div>
+							<div class="layui-input-inline" style="width: 150px;">
+								<input type="text" id="serviceName" autocomplete="off" class="layui-input">
+							</div>
 							<div class="layui-form-mid">方式：</div>
 							<div class="layui-input-inline" style="width: 150px;">
 								<select id="method" name="method" lay-verify="enabled">
 									<option value="">请选择</option>
 									<option value="FTP">FTP</option>
 									<option value="SFTP">SFTP</option>
-									<option value="HADOOP">HADOOP</option>
+									<option value="HDFS">HDFS</option>
+									<option value="HTTP">HTTP</option>
 								</select>
 							</div>
 							<div class="layui-form-mid" style="margin-left: 30px;">IP：</div>
@@ -38,11 +43,6 @@
 								<input type="text" id="userName" autocomplete="off"
 									class="layui-input">
 							</div>
-							<div class="layui-form-mid" style="margin-left: 30px;">路径：</div>
-							<div class="layui-input-inline" style="width: 150px;">
-								<input type="text" id="route" autocomplete="off"
-									class="layui-input">
-							</div>
 							<button class="layui-btn" onclick="return false;"
 								data-type="reload" id="searchBtn">查询</button>
 							<button class="layui-btn layui-bg-cyan" onclick="reset()">重置</button>
@@ -52,12 +52,14 @@
 					</div>
 
 					<table class="layui-table" lay-filter="dataTable"
-						lay-data="{url:'${ctx}/remoteGetFileInfo/list', method:'post',page:true,
+						lay-data="{url:'${ctx}/remoteGetFileConfig/list', method:'post',page:true,
 							limit:10,limits:[10,20,30],id:'dataTable',loading:true}">
 						<thead>
 							<tr>
 								<th lay-data="{type:'numbers',width:'5%'}">序号</th>
 								<th lay-data="{field:'id',hide:true}">ID</th>
+								<th lay-data="{field:'uniqueName',align:'center',width:'13%'}">关联用户</th>
+								<th lay-data="{field:'serviceName',align:'center',width:'15%'}">地址名称</th>
 								<th lay-data="{field:'method',align:'center',width:'8%'}">方式</th>
 								<th lay-data="{field:'ip',align:'center',width:'12%'}">IP</th>
 								<th lay-data="{field:'port',align:'center',width:'8%'}">端口</th>
@@ -66,7 +68,9 @@
 								<th lay-data="{field:'route',align:'center',width:'20%'}">路径</th>
 								<th lay-data="{field:'createTime',align:'center',width:'13%'}">创建时间</th>
 								<th lay-data="{field:'updateTime',align:'center',width:'13%'}">修改时间</th>
+								<shiro:hasRole name="admin">
 								<th lay-data="{field:'right',align:'center',toolbar:'#toolBar',fixed:'right',width:'13%'}">操作</th>
+								</shiro:hasRole>
 							</tr>
 						</thead>
 					</table>
@@ -96,7 +100,7 @@
 							method : $('#method').val(),
 							ip : $('#ip').val(),
 							userName : $('#userName').val(),
-							route : $('#route').val()
+							serviceName : $('#serviceName').val()
 						}
 					});
 				}
@@ -113,7 +117,7 @@
 					layer.confirm('删除后将无法恢复,确定要删除？', function(index) {
 						$.ajax({
 							type : "POST",
-							url : '${ctx}/remoteGetFileInfo/deleteById',
+							url : '${ctx}/remoteGetFileConfig/deleteById',
 							async : false,
 							data : {
 								id : data.id
@@ -128,11 +132,11 @@
 					layer.open({
 						type : 2,
 						title : '编辑',
-						area : [ '450px', '450px' ],
+						area : [ '680px', '380px' ],
 						shade : 0.8,
 						closeBtn : 1,
 						shadeClose : true,
-						content : '${ctx}/remoteGetFileInfo/editPage?type=edit&id=' + data.id
+						content : '${ctx}/remoteGetFileConfig/editPage?type=edit&id=' + data.id
 					});
 				}
 			});
@@ -143,11 +147,11 @@
 			layer.open({
 				type : 2,
 				title : '新增',
-				area : [ '450px', '450px' ],
+				area : [ '680px', '380px' ],
 				shade : 0.8,
 				closeBtn : 1,
 				shadeClose : true,
-				content : '${ctx}/remoteGetFileInfo/editPage?type=add'
+				content : '${ctx}/remoteGetFileConfig/editPage?type=add'
 			});
 		}
 

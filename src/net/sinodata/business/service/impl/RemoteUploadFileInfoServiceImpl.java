@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import net.sf.json.JSONObject;
 import net.sinodata.business.dao.RemoteUploadFileInfoDao;
+import net.sinodata.business.entity.FileInfo;
 import net.sinodata.business.entity.PageVo;
-import net.sinodata.business.entity.RemoteUploadFileInfo;
 import net.sinodata.business.service.RemoteUploadFileInfoService;
 import net.sinodata.business.util.PageUtil;
 
@@ -17,37 +17,50 @@ import net.sinodata.business.util.PageUtil;
 public class RemoteUploadFileInfoServiceImpl implements RemoteUploadFileInfoService {
 
 	@Autowired
-	private RemoteUploadFileInfoDao remoteUploadFileInfoDao;
+	private RemoteUploadFileInfoDao dao;
 
 	@Override
-	public JSONObject list(Map<String, Object> map) {
+	public JSONObject ftpList(Map<String, Object> map) {
 		PageVo page = new PageVo(Integer.parseInt((String) map.get("page")), Long.parseLong((String) map.get("limit")));
 		map.put("start", page.getStart());
 		map.put("end", page.getEnd());
-		List<RemoteUploadFileInfo> list = remoteUploadFileInfoDao.list(map);
-		int count = remoteUploadFileInfoDao.fileCount(map);
+		List<FileInfo> list = dao.ftpList(map);
+		int count = dao.ftpCount(map);
 		JSONObject result = PageUtil.LayuiData(list, count);
 		return result;
 	}
 
 	@Override
-	public RemoteUploadFileInfo getById(String id) {
-		return remoteUploadFileInfoDao.getById(id);
+	public JSONObject sftpList(Map<String, Object> map) {
+		PageVo page = new PageVo(Integer.parseInt((String) map.get("page")), Long.parseLong((String) map.get("limit")));
+		map.put("start", page.getStart());
+		map.put("end", page.getEnd());
+		List<FileInfo> list = dao.sftpList(map);
+		int count = dao.sftpCount(map);
+		JSONObject result = PageUtil.LayuiData(list, count);
+		return result;
 	}
 
 	@Override
-	public int add(RemoteUploadFileInfo remoteUploadFileInfo) {
-		return remoteUploadFileInfoDao.add(remoteUploadFileInfo);
+	public JSONObject hdfsList(Map<String, Object> map) {
+		PageVo page = new PageVo(Integer.parseInt((String) map.get("page")), Long.parseLong((String) map.get("limit")));
+		map.put("start", page.getStart());
+		map.put("end", page.getEnd());
+		List<FileInfo> list = dao.hdfsList(map);
+		int count = dao.hdfsCount(map);
+		JSONObject result = PageUtil.LayuiData(list, count);
+		return result;
 	}
 
 	@Override
-	public int updateById(RemoteUploadFileInfo remoteUploadFileInfo) {
-		return remoteUploadFileInfoDao.updateById(remoteUploadFileInfo);
-	}
-
-	@Override
-	public int deleteById(String id) {
-		return remoteUploadFileInfoDao.deleteById(id);
+	public JSONObject httpList(Map<String, Object> map) {
+		PageVo page = new PageVo(Integer.parseInt((String) map.get("page")), Long.parseLong((String) map.get("limit")));
+		map.put("start", page.getStart());
+		map.put("end", page.getEnd());
+		List<FileInfo> list = dao.httpList(map);
+		int count = dao.httpCount(map);
+		JSONObject result = PageUtil.LayuiData(list, count);
+		return result;
 	}
 
 }

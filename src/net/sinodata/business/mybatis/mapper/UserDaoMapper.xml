@@ -80,5 +80,9 @@
 		update S_USER t set t.USER_PASSWD = #{userPwd,jdbcType=VARCHAR}
 		where t.USER_ID = #{userId,jdbcType=VARCHAR}
 	</update>
+	
+	<select id="findAllUser" resultMap="UserMap">
+		select UNIQUE_CODE,USER_NAME from S_USER order by CREATE_TIME desc
+	</select>
 
 </mapper>

@@ -35,5 +35,7 @@ public interface UserDao {
 
 	// 修改用户密码
 	int updateUserPwd(User user);
+	
+	List<User> findAllUser();
 
 }

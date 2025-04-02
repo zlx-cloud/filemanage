@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>远程获取文件信息列表</title>
+<title>远程上传文件配置列表</title>
 <link rel="stylesheet" type="text/css" href="${ctx}/static/layui/css/layui.css" />
 <link rel="stylesheet" type="text/css" href="${ctx}/static/layui/css/view.css" />
 <link rel="stylesheet" type="text/css" href="${ctx}/static/css/common.css" />
@@ -19,45 +19,47 @@
 				<div class="form-box">
 					<div class="layui-form layui-form-item">
 						<div class="layui-inline" style="width: 100%;">
-							<div class="layui-form-mid">方式：</div>
+							<div class="layui-form-mid">地址名称：</div>
+							<div class="layui-input-inline" style="width: 150px;">
+								<input type="text" id="serviceName" autocomplete="off" class="layui-input">
+							</div>
+							<div class="layui-form-mid" style="margin-left: 20px;">方式：</div>
 							<div class="layui-input-inline" style="width: 150px;">
 								<select id="method" name="method" lay-verify="enabled">
 									<option value="">请选择</option>
 									<option value="FTP">FTP</option>
 									<option value="SFTP">SFTP</option>
-									<option value="HADOOP">HADOOP</option>
+									<option value="HDFS">HDFS</option>
+									<option value="HTTP">HTTP</option>
 								</select>
 							</div>
-							<div class="layui-form-mid" style="margin-left: 30px;">IP：</div>
+							<div class="layui-form-mid" style="margin-left: 20px;">IP：</div>
 							<div class="layui-input-inline" style="width: 150px;">
-								<input type="text" id="ip" autocomplete="off"
-									class="layui-input">
+								<input type="text" id="ip" autocomplete="off" class="layui-input">
 							</div>
-							<div class="layui-form-mid" style="margin-left: 30px;">用户名：</div>
+							<div class="layui-form-mid" style="margin-left: 20px;">用户名：</div>
 							<div class="layui-input-inline" style="width: 150px;">
-								<input type="text" id="userName" autocomplete="off"
-									class="layui-input">
+								<input type="text" id="userName" autocomplete="off" class="layui-input">
 							</div>
-							<div class="layui-form-mid" style="margin-left: 30px;">路径：</div>
-							<div class="layui-input-inline" style="width: 150px;">
-								<input type="text" id="route" autocomplete="off"
-									class="layui-input">
-							</div>
-							<button class="layui-btn" onclick="return false;"
-								data-type="reload" id="searchBtn">查询</button>
+							<button class="layui-btn" onclick="return false;" data-type="reload" id="searchBtn">查询</button>
 							<button class="layui-btn layui-bg-cyan" onclick="reset()">重置</button>
-							<button class="layui-btn layui-btn-normal" onclick="add()"
-								style="float: right">新增</button>
+							<button class="layui-btn layui-btn-normal" onclick="add()" style="float: right">新增</button>
 						</div>
 					</div>
 
+					<button style="display: none" id="fileUpload" name="file"></button>
+					<input style="display: none" id="configId" name="configId" />
+					<input style="display: none" id="configMethod" name="configMethod" />
+
 					<table class="layui-table" lay-filter="dataTable"
-						lay-data="{url:'${ctx}/remoteUploadFileInfo/list', method:'post',page:true,
+						lay-data="{url:'${ctx}/remoteUploadFileConfig/list', method:'post',page:true,
 							limit:10,limits:[10,20,30],id:'dataTable',loading:true}">
 						<thead>
 							<tr>
 								<th lay-data="{type:'numbers',width:'5%'}">序号</th>
 								<th lay-data="{field:'id',hide:true}">ID</th>
+								<th lay-data="{field:'uniqueName',align:'center',width:'13%'}">关联用户</th>
+								<th lay-data="{field:'serviceName',align:'center',width:'15%'}">地址名称</th>
 								<th lay-data="{field:'method',align:'center',width:'8%'}">方式</th>
 								<th lay-data="{field:'ip',align:'center',width:'12%'}">IP</th>
 								<th lay-data="{field:'port',align:'center',width:'8%'}">端口</th>
@@ -66,7 +68,9 @@
 								<th lay-data="{field:'route',align:'center',width:'20%'}">路径</th>
 								<th lay-data="{field:'createTime',align:'center',width:'13%'}">创建时间</th>
 								<th lay-data="{field:'updateTime',align:'center',width:'13%'}">修改时间</th>
-								<th lay-data="{field:'right',align:'center',toolbar:'#toolBar',fixed:'right',width:'13%'}">操作</th>
+								<shiro:hasRole name="admin">
+								<th lay-data="{field:'right',align:'center',toolbar:'#toolBar',fixed:'right',width:'16%'}">操作</th>
+								</shiro:hasRole>
 							</tr>
 						</thead>
 					</table>
@@ -76,14 +80,16 @@
 	</div>
 	<script src="${ctx}/static/js/jquery.min.js"></script>
 	<script src="${ctx}/static/layui/layui.all.js"></script>
-
 	<script type="text/html" id="toolBar">
   		<a class="layui-btn layui-btn-cz" lay-event="edit">编辑</a>
   		<a class="layui-btn layui-btn-danger layui-btn-cz" lay-event="del">删除</a>
+		<a class="layui-btn layui-btn-warm layui-btn-cz" style="width:60px" lay-event="upload">文件上传</a>
 	</script>
 	<script>
-		layui.use('table', function() {
-			var table = layui.table;
+		var table,upload;
+		layui.use(['table','upload'], function() {
+			table = layui.table,upload = layui.upload;
+			
 			var $ = layui.$, active = {
 				//表格刷新
 				reload : function() {
@@ -96,11 +102,29 @@
 							method : $('#method').val(),
 							ip : $('#ip').val(),
 							userName : $('#userName').val(),
-							route : $('#route').val()
+							serviceName : $('#serviceName').val()
 						}
-					});
+					})
 				}
 			};
+			
+			upload.render({
+				elem : '#fileUpload',
+				url : '${ctx}/remoteUploadFileInfo/upload',
+				accept : 'file',
+				data: {
+					"configId" : function(){
+						return $('#configId').val();
+					},
+					"configMethod" : function(){
+						return $('#configMethod').val();
+					}
+				},
+				done : function(res) {
+					layer.msg(res.message);
+				}
+			});
+			
 			$('#searchBtn').on('click', function() {
 				var type = $(this).data('type');
 				active[type] ? active[type].call(this) : '';
@@ -113,7 +137,7 @@
 					layer.confirm('删除后将无法恢复,确定要删除？', function(index) {
 						$.ajax({
 							type : "POST",
-							url : '${ctx}/remoteUploadFileInfo/deleteById',
+							url : '${ctx}/remoteUploadFileConfig/deleteById',
 							async : false,
 							data : {
 								id : data.id
@@ -128,26 +152,30 @@
 					layer.open({
 						type : 2,
 						title : '编辑',
-						area : [ '450px', '450px' ],
+						area : [ '680px', '380px' ],
 						shade : 0.8,
 						closeBtn : 1,
 						shadeClose : true,
-						content : '${ctx}/remoteUploadFileInfo/editPage?type=edit&id=' + data.id
+						content : '${ctx}/remoteUploadFileConfig/editPage?type=edit&id=' + data.id
 					});
+				} else if (obj.event === 'upload') {
+					$("#configId").val(data.id);
+					$("#configMethod").val(data.method);
+					$("#fileUpload").click();
 				}
 			});
 		});
-
+		
 		//添加
 		function add() {
 			layer.open({
 				type : 2,
 				title : '新增',
-				area : [ '450px', '450px' ],
+				area : [ '680px', '380px' ],
 				shade : 0.8,
 				closeBtn : 1,
 				shadeClose : true,
-				content : '${ctx}/remoteUploadFileInfo/editPage?type=add'
+				content : '${ctx}/remoteUploadFileConfig/editPage?type=add'
 			});
 		}
 

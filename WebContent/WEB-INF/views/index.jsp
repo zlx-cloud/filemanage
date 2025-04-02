@@ -55,14 +55,48 @@
 						</dl>
 					</li>
 					<li class="layui-nav-item">
-						<a href="${ctx}/remoteGetFileInfo/listPage" target="iframeMain">
-							<i class="layui-icon layui-icon-file"></i>&nbsp;远程获取文件信息
+						<a href="javascript:;">
+							<i class="layui-icon layui-icon-file"></i> &nbsp;远程文件获取
 						</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="${ctx}/remoteGetFileConfig/listPage" target="iframeMain">远程文件获取配置</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteGetFileInfo/ftpListPage" target="iframeMain">FTP文件获取信息</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteGetFileInfo/sftpListPage" target="iframeMain">SFTP文件获取信息</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteGetFileInfo/hdfsListPage" target="iframeMain">HDFS文件获取信息</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteGetFileInfo/httpListPage" target="iframeMain">HTTP文件获取信息</a>
+							</dd>
+						</dl>
 					</li>
 					<li class="layui-nav-item">
-						<a href="${ctx}/remoteUploadFileInfo/listPage" target="iframeMain">
-							<i class="layui-icon layui-icon-file"></i>&nbsp;远程上传文件信息
+						<a href="javascript:;">
+							<i class="layui-icon layui-icon-upload-drag"></i> &nbsp;远程文件上传
 						</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="${ctx}/remoteUploadFileConfig/listPage" target="iframeMain">远程文件上传配置</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteUploadFileInfo/ftpListPage" target="iframeMain">FTP文件上传信息</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteUploadFileInfo/sftpListPage" target="iframeMain">SFTP文件上传信息</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteUploadFileInfo/hdfsListPage" target="iframeMain">HDFS文件上传信息</a>
+							</dd>
+							<dd>
+								<a href="${ctx}/remoteUploadFileInfo/httpListPage" target="iframeMain">HTTP文件上传信息</a>
+							</dd>
+						</dl>
 					</li>
 					<shiro:hasRole name="admin">
 						<li class="layui-nav-item">

@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//WebContent/static/layui/layui.js=GBK
 encoding//resources/application.properties=UTF-8
 encoding//resources/log4j.properties=UTF-8
 encoding//src/net/sinodata/security/filter/LoginFilter.java=UTF-8

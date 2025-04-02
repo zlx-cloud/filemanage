@@ -35,9 +35,29 @@ public class ConfigInfo {
 
 	@Value("${targetfoldertwofinal}")
 	private String targetfoldertwofinal;
-	
+
 	@Value("${uploaderrorfile}")
 	private String uploaderrorfile;
+
+	@Value("${remotefolderftp}")
+	private String remotefolderftp;
+	
+	@Value("${remotefoldersftp}")
+	private String remotefoldersftp;
+	
+	@Value("${remotefolderhdfs}")
+	private String remotefolderhdfs;
+	
+	@Value("${remotefolderhttp}")
+	private String remotefolderhttp;
+
+	public Long getFilesize() {
+		return filesize;
+	}
+
+	public void setFilesize(Long filesize) {
+		this.filesize = filesize;
+	}
 
 	public String getBufferfolder() {
 		return bufferfolder;
@@ -55,14 +75,6 @@ public class ConfigInfo {
 		this.targetfolder = targetfolder;
 	}
 
-	public Long getFilesize() {
-		return filesize;
-	}
-
-	public void setFilesize(Long filesize) {
-		this.filesize = filesize;
-	}
-
 	public String getGabakfolder() {
 		return gabakfolder;
 	}
@@ -71,20 +83,20 @@ public class ConfigInfo {
 		this.gabakfolder = gabakfolder;
 	}
 
-	public String getExpire() {
-		return expire;
-	}
-
-	public void setExpire(String expire) {
-		this.expire = expire;
-	}
-
 	public String getErrorfolder() {
 		return errorfolder;
 	}
 
 	public void setErrorfolder(String errorfolder) {
 		this.errorfolder = errorfolder;
+	}
+
+	public String getExpire() {
+		return expire;
+	}
+
+	public void setExpire(String expire) {
+		this.expire = expire;
 	}
 
 	public int getFileno() {
@@ -125,6 +137,38 @@ public class ConfigInfo {
 
 	public void setUploaderrorfile(String uploaderrorfile) {
 		this.uploaderrorfile = uploaderrorfile;
+	}
+
+	public String getRemotefolderftp() {
+		return remotefolderftp;
+	}
+
+	public void setRemotefolderftp(String remotefolderftp) {
+		this.remotefolderftp = remotefolderftp;
+	}
+
+	public String getRemotefoldersftp() {
+		return remotefoldersftp;
+	}
+
+	public void setRemotefoldersftp(String remotefoldersftp) {
+		this.remotefoldersftp = remotefoldersftp;
+	}
+
+	public String getRemotefolderhdfs() {
+		return remotefolderhdfs;
+	}
+
+	public void setRemotefolderhdfs(String remotefolderhdfs) {
+		this.remotefolderhdfs = remotefolderhdfs;
+	}
+
+	public String getRemotefolderhttp() {
+		return remotefolderhttp;
+	}
+
+	public void setRemotefolderhttp(String remotefolderhttp) {
+		this.remotefolderhttp = remotefolderhttp;
 	}
 
 }

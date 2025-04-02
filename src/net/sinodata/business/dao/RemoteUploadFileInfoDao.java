@@ -3,24 +3,27 @@ package net.sinodata.business.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
+import net.sinodata.business.entity.FileInfo;
 import net.sinodata.business.entity.RemoteUploadFileInfo;
 
 public interface RemoteUploadFileInfoDao {
 
-	// 信息列表
-	List<RemoteUploadFileInfo> list(Map<String, Object> map);
+	int addFileInfo(RemoteUploadFileInfo remoteUploadFileInfo);
 
-	// 信息个数
-	int fileCount(Map<String, Object> map);
+	List<FileInfo> ftpList(Map<String, Object> map);
 
-	RemoteUploadFileInfo getById(@Param("id") String id);
+	int ftpCount(Map<String, Object> map);
 
-	int add(RemoteUploadFileInfo remoteUploadFileInfo);
+	List<FileInfo> sftpList(Map<String, Object> map);
 
-	int updateById(RemoteUploadFileInfo remoteUploadFileInfo);
+	int sftpCount(Map<String, Object> map);
 
-	int deleteById(@Param("id") String id);
+	List<FileInfo> hdfsList(Map<String, Object> map);
+
+	int hdfsCount(Map<String, Object> map);
+
+	List<FileInfo> httpList(Map<String, Object> map);
+
+	int httpCount(Map<String, Object> map);
 
 }

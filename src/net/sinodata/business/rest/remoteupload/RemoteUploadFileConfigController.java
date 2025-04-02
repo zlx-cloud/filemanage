@@ -1,7 +1,6 @@
-package net.sinodata.business.rest;
+package net.sinodata.business.rest.remoteupload;
 
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,31 +10,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import net.sf.json.JSONObject;
-import net.sinodata.business.entity.RemoteUploadFileInfo;
-import net.sinodata.business.service.RemoteUploadFileInfoService;
+import net.sinodata.business.dao.RemoteUploadFileInfoDao;
+import net.sinodata.business.entity.ConfigInfo;
+import net.sinodata.business.entity.RemoteUploadFileConfig;
+import net.sinodata.business.service.RemoteUploadFileConfigService;
 import net.sinodata.business.util.DateUtil;
 import net.sinodata.business.util.StringUtil;
 
 @Controller
-@RequestMapping(value = "/remoteUploadFileInfo")
-public class RemoteUploadFileInfoController {
+@RequestMapping(value = "/remoteUploadFileConfig")
+public class RemoteUploadFileConfigController {
 
 	@Autowired
-	RemoteUploadFileInfoService remoteUploadFileInfoService;
+	RemoteUploadFileConfigService remoteUploadFileConfigService;
+	@Autowired
+	ConfigInfo configInfo;
+	@Autowired
+	RemoteUploadFileInfoDao remoteUploadFileInfoDao;
 
 	// 列表页面
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
 	public String listPage() {
-		return "business/remoteUploadFileInfo/list";
+		return "business/remoteUploadFileConfig/list";
 	}
 
 	// 信息列表
 	@RequestMapping(value = "/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public JSONObject list(@RequestParam Map<String, Object> params) {
-		JSONObject result = remoteUploadFileInfoService.list(params);
+		JSONObject result = remoteUploadFileConfigService.list(params);
 		return result;
 	}
 
@@ -44,27 +48,27 @@ public class RemoteUploadFileInfoController {
 	public String editPage(HttpServletRequest request) {
 		String id = request.getParameter("id");
 		if (!StringUtil.isEmpty(id)) {
-			RemoteUploadFileInfo remoteUploadFileInfo = remoteUploadFileInfoService.getById(id);
-			request.setAttribute("file", remoteUploadFileInfo);
+			RemoteUploadFileConfig remoteUploadFileConfig = remoteUploadFileConfigService.getById(id);
+			request.setAttribute("file", remoteUploadFileConfig);
 		}
 		String type = request.getParameter("type");
 		request.setAttribute("type", type);
-		return "business/remoteUploadFileInfo/edit";
+		return "business/remoteUploadFileConfig/edit";
 	}
 
 	// 信息维护
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String edit(RemoteUploadFileInfo remoteUploadFileInfo) {
+	public String edit(RemoteUploadFileConfig remoteUploadFileConfig) {
 		int result = 0;
-		String type = remoteUploadFileInfo.getType();
+		String type = remoteUploadFileConfig.getType();
 		if ("add".equals(type)) {
-			remoteUploadFileInfo.setId(StringUtil.createUUID());
-			remoteUploadFileInfo.setCreateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
-			result = remoteUploadFileInfoService.add(remoteUploadFileInfo);
+			remoteUploadFileConfig.setId(StringUtil.createUUID());
+			remoteUploadFileConfig.setCreateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
+			result = remoteUploadFileConfigService.add(remoteUploadFileConfig);
 		} else if ("edit".equals(type)) {
-			remoteUploadFileInfo.setUpdateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
-			result = remoteUploadFileInfoService.updateById(remoteUploadFileInfo);
+			remoteUploadFileConfig.setUpdateTime(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
+			result = remoteUploadFileConfigService.updateById(remoteUploadFileConfig);
 		}
 		return result + "";
 	}
@@ -73,7 +77,7 @@ public class RemoteUploadFileInfoController {
 	@RequestMapping(value = "/deleteById", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void deleteById(@RequestParam(value = "id") String id) {
-		remoteUploadFileInfoService.deleteById(id);
+		remoteUploadFileConfigService.deleteById(id);
 	}
 
 }

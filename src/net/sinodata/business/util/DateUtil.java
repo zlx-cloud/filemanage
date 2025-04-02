@@ -12,7 +12,7 @@ public class DateUtil {
 		String format = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 		return format;
 	}
-	
+
 	/**
 	 * 获取现在时间
 	 * 
@@ -23,6 +23,11 @@ public class DateUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		String date = sdf.format(new Date());
 		return date;
+	}
+
+	public static String dateFormat(Date date, String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.format(date);
 	}
 
 }
