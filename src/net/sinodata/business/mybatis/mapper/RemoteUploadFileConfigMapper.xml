@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.RemoteUploadFileConfigDao">
+
+	<resultMap id="RemoteUploadFileInfoMap" type="net.sinodata.business.entity.RemoteUploadFileConfig">
+		<result column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="METHOD" property="method" jdbcType="VARCHAR" />
+		<result column="IP" property="ip" jdbcType="VARCHAR" />
+		<result column="PORT" property="port" jdbcType="VARCHAR" />
+		<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+		<result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+		<result column="ROUTE" property="route" jdbcType="VARCHAR" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="VARCHAR" />
+		<result column="UPDATE_TIME" property="updateTime" jdbcType="VARCHAR" />
+		<result column="SERVICE_NAME" property="serviceName" jdbcType="VARCHAR" />
+		<result column="UNIQUE_CODE" property="uniqueCode" jdbcType="VARCHAR" />
+		<result column="UNIQUE_NAME" property="uniqueName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="list" resultMap="RemoteUploadFileInfoMap" parameterType="map">
+		select * from (
+			select k.*, rownum rnum from (
+				select t.*,u.USER_NAME as UNIQUE_NAME from t_remote_upload_file_config t
+				left join S_USER u on t.UNIQUE_CODE = u.UNIQUE_CODE
+				where 1 = 1
+				<if test="method!=null and method!=''"> 
+					and t.METHOD = #{method,jdbcType=VARCHAR}
+				</if>
+				<if test="ip!=null and ip!=''"> 
+					and t.IP like '%'||#{ip,jdbcType=VARCHAR}||'%'
+				</if>
+				<if test="userName!=null and userName!=''"> 
+					and t.USER_NAME like '%'||#{userName,jdbcType=VARCHAR}||'%'
+				</if>
+				<if test="serviceName!=null and serviceName!=''"> 
+					and t.SERVICE_NAME like '%'||#{serviceName,jdbcType=VARCHAR}||'%'
+				</if>
+				order by t.CREATE_TIME desc
+			) k where rownum &lt;= #{end}
+		) where rnum &gt; #{start}
+	</select>
+	
+	<select id="fileCount" parameterType="map" resultType="int">
+		select count(1) from t_remote_upload_file_config t where 1 = 1
+		<if test="method!=null and method!=''"> 
+			and t.METHOD = #{method,jdbcType=VARCHAR}
+		</if>
+		<if test="ip!=null and ip!=''"> 
+			and t.IP like '%'||#{ip,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="userName!=null and userName!=''"> 
+			and t.USER_NAME like '%'||#{userName,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="serviceName!=null and serviceName!=''"> 
+			and t.SERVICE_NAME like '%'||#{serviceName,jdbcType=VARCHAR}||'%'
+		</if>
+	</select>
+	
+	<select id="getById" resultMap="RemoteUploadFileInfoMap" parameterType="string">
+		select t.* from t_remote_upload_file_config t where t.ID = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="add" parameterType="net.sinodata.business.entity.RemoteUploadFileInfo">
+		insert into t_remote_upload_file_config(ID,METHOD,IP,PORT,
+			USER_NAME,PASSWORD,ROUTE,CREATE_TIME,SERVICE_NAME,UNIQUE_CODE) 
+		values
+		(#{id,jdbcType=VARCHAR},#{method,jdbcType=VARCHAR},
+		 #{ip,jdbcType=VARCHAR},#{port,jdbcType=VARCHAR},
+		 #{userName,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},
+		 #{route,jdbcType=VARCHAR},#{createTime,jdbcType=VARCHAR},
+		 #{serviceName,jdbcType=VARCHAR},#{uniqueCode,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateById" parameterType="net.sinodata.business.entity.RemoteUploadFileInfo">
+		update t_remote_upload_file_config t set
+		t.UNIQUE_CODE = #{uniqueCode,jdbcType=VARCHAR},
+		t.METHOD = #{method,jdbcType=VARCHAR},
+		t.IP = #{ip,jdbcType=VARCHAR},
+		t.PORT = #{port,jdbcType=VARCHAR},
+		t.USER_NAME = #{userName,jdbcType=VARCHAR},
+		t.PASSWORD = #{password,jdbcType=VARCHAR},
+		t.ROUTE = #{route,jdbcType=VARCHAR},
+		t.UPDATE_TIME = #{updateTime,jdbcType=VARCHAR},
+		t.SERVICE_NAME = #{serviceName,jdbcType=VARCHAR}
+		where t.ID = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteById" parameterType="string">
+		delete from t_remote_upload_file_config t where t.ID = #{id,jdbcType=VARCHAR}
+	</delete>
+
+</mapper>
